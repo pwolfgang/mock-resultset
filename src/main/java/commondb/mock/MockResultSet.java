@@ -41,10 +41,10 @@ public class MockResultSet implements ResultSet {
 	static final String INVALID_COLUMN_NAME = "invalid column name";
 	static final String INVALID_COLUMN_INDEX = "invalid column index";
         static final DateFormat DATE_ISO_8601 = new SimpleDateFormat("yyyy-MM-dd");
-	private List<String[]> rowset = new ArrayList<String[]>();
+	private final List<String[]> rowset = new ArrayList<>();
 	private int cursor = -1;
-	private Map<String, Integer> columnMap = new HashMap<String, Integer>();
-	private CSVLineSplitter splitter = new CSVLineSplitter();
+	private final Map<String, Integer> columnMap = new HashMap<>();
+	private final CSVLineSplitter splitter = new CSVLineSplitter();
 
 	public MockResultSet() {
 	}
@@ -57,6 +57,7 @@ public class MockResultSet implements ResultSet {
 	 * );
 	 *
 	 * @param str headers and rows that form the CSV data
+         * @throws java.sql.SQLException
 	 */
 	public MockResultSet(String... str) throws SQLException {
 		loadCSV(new StringReader(StringUtils.join(str, "\n")));
@@ -73,7 +74,7 @@ public class MockResultSet implements ResultSet {
 		loadCSV(in);
 	}
 	
-	public void loadCSV(Readable in) throws SQLException {
+	public final void loadCSV(Readable in) throws SQLException {
 		final Scanner sc = new Scanner(in);
 		
 		if (!sc.hasNextLine()) {
@@ -522,10 +523,10 @@ public class MockResultSet implements ResultSet {
 
 	@Override
 	public String getString(String columnLabel) throws SQLException {
-		return getString(getColumnIndex(columnLabel));
+		return getString(getColumnIndex((columnLabel)));
 	}
 
-	private Integer getColumnIndex(String columnLabel) throws SQLException {
+	protected Integer getColumnIndex(String columnLabel) throws SQLException {
 		Integer index = columnMap.get(columnLabel);
 		if (index == null) {
 			throw new SQLException(INVALID_COLUMN_NAME);

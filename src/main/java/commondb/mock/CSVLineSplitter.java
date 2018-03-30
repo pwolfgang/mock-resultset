@@ -3,6 +3,10 @@
 * Copyright (c) 2009, Marcelo Criscuolo.
 */
 
+/**
+ * Modified by Paul Wolfgang to bring it up to Java 8.
+ */
+
 package commondb.mock;
 
 import java.util.LinkedList;
@@ -29,7 +33,7 @@ public class CSVLineSplitter {
 	}
 
 	private void reset() {
-		tokens = new LinkedList<String>();
+		tokens = new LinkedList<>();
 		currentChar = 0;
 	}
 	
@@ -83,16 +87,19 @@ public class CSVLineSplitter {
 			char c = line.charAt(currentChar);
 			startChar = currentChar;
 			
-			State state = null;
-			if (c == '"') {
-				state = new QuotedToken();
-			} else if (c == ',') {
-				state = new EmptyField();
-			} else {
-				state = new NonQuotedToken();
-			}
+			State state;
+                        switch (c) {
+                        case '"':
+                            state = new QuotedToken();
+                            break;
+                        case ',':
+                            state = new EmptyField();
+                            break;
+                        default:
+                            state = new NonQuotedToken();
+                            break;
+                    }
 			
-
 			return state;
 		}
 	}
